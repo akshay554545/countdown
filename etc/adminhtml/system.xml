@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="magesture" translate="label" sortOrder="10">
+            <label>Magesture</label>
+        </tab>
+        <section id="countdown" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Countdown</label>
+            <tab>magesture</tab>
+            <resource>Magesture_CountDown::countdown_configuration</resource>
+            <!-- product lsit -->
+            <group id="product_list" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Product List Page Configuration</label>
+                <field id="product_list_page_show" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>CountDown Show In Product List Page</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="product_list_page_show_label_start" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Product Sale Start Of Label</label>
+                    <comment>This text will display on the frontend.</comment>
+                </field>
+                <field id="product_list_page_show_label_end" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Product Sale End Of Label</label>
+                    <comment>This text will display on the frontend.</comment>
+                </field>
+            </group>
+            <!-- product  view -->
+            <group id="product_view" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Product View Page Configuration</label>
+                <field id="product_view_page_show" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>CountDown Show In Product View Page</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="product_view_page_show_label_start" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Product Sale Start Of Label</label>
+                    <comment>This text will display on the frontend.</comment>
+                </field>
+                <field id="product_view_page_show_label_end" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Product Sale End Of Label</label>
+                    <comment>This text will display on the frontend.</comment>
+                </field>
+            </group>
+            <!-- related upsell -->
+            <group id="product_upsell_related" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Product Related, upsell View Page Configuration</label>
+                <field id="product_upsell_related_page_show" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>CountDown Show In Related,Upsell Product</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="product_upsell_related_show_label_start" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Product Sale Start Of Label</label>
+                    <comment>This text will display on the frontend.</comment>
+                </field>
+                <field id="product_upsell_related_page_show_label_end" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Product Sale End Of Label</label>
+                    <comment>This text will display on the frontend.</comment>
+                </field>
+            </group>
+            <!-- Customer Group -->
+            <group id="customer_group" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Customer Group</label>
+                <field id="customer_group" translate="label" type="multiselect" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Customer Groups</label>
+                    <source_model>Magesture\CountDown\Model\Adminhtml\System\Config\Source\Customer\Group</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+            </group>
+            <!-- store group -->
+            <group id="store_group" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Store  Group</label>
+                <field id="store_group" translate="label" type="multiselect" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="1">
+                   <label>Store Group</label>
+                   <source_model>Magesture\CountDown\Model\Adminhtml\System\Config\Source\Store\Group</source_model>
+                   <can_be_empty>1</can_be_empty>
+                   <comment>Store Name (Website Name)</comment>
+                </field>
+            </group>
+            <!-- Product Notify Add To Crat Button -->
+            <group id="notify_add_to_crat" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Product Notify Add To Crat Button</label>
+                <field id="notify_add_to_crat" translate="label" type="text" sortOrder="12" showInDefault="1" showInWebsite="0" showInStore="0">
+                   <label>Product Notify Add To Crat Count-Down Label</label>
+                </field>
+                <field id="notify_add_to_crat_button" translate="label" type="text" sortOrder="13" showInDefault="1" showInWebsite="0" showInStore="0">
+                   <label>Product Notify Button Label</label>
+                   <comment>Product</comment>
+                </field>
+            </group>
+
+        </section>
+    </system>
+</config>

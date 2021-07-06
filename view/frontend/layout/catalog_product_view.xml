@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+		<css src="Magesture_CountDown::css/countdown_productview.css"/>
+	</head>
+    <body>
+        <referenceBlock name="product.info.addtocart">
+            <block class="Magento\Catalog\Block\Product\View" name="product.custom.simple" template="Magesture_CountDown::product/view.phtml" />
+        </referenceBlock>
+        <!-- <move element="product.custom.simple" destination="product.info.addtocart" before="-"> -->
+        <!-- </move> -->
+        <referenceBlock name="product.info.addtocart.additional">
+            <block class="Magento\Catalog\Block\Product\View" name="product.custom.additional" before="product.info.addtocart" template="Magesture_CountDown::product/view.phtml" />
+        </referenceBlock>
+        <referenceBlock name="catalog.product.related" template="Magesture_CountDown::product/list/items.phtml"/>  
+        <referenceBlock name="product.info.upsell" template="Magesture_CountDown::product/list/items.phtml"/>   
+         <referenceBlock name="product.info.addtocart">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magesture_CountDown::product/view/addtocart.phtml</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="product.info.addtocart.additional">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magesture_CountDown::product/view/addtocart.phtml</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="product.info">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magesture_CountDown::product/view/notifybutton.phtml</argument>
+            </action>
+        </referenceBlock>
+    </body>
+</page>

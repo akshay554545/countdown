@@ -1,0 +1,95 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/** @var $block \Magento\Catalog\Block\Product\View */
+?>
+
+<?php $_product = $block->getProduct(); ?>
+<?php
+  $helper = $this->helper('Magesture\CountDown\Helper\Data');
+  $getNotifyAddToCrat = $helper->getNotifyAddToCrat();
+  $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+  $customerSession = $objectManager->get('Magento\Customer\Model\SessionFactory')->create();
+  $customer_email = $customerSession->getCustomer()->getEmail();
+  $customer_id = $customerSession->getCustomer()->getId();
+  $objDate = $objectManager->create('Magento\Framework\Stdlib\DateTime\DateTime');
+  $current_date =new DateTime($objDate->gmtDate());
+  $releaseDateCountDown= new DateTime($_product->getfeatured_product_countdown_release_date());
+   // print_r($objDate->gmtDate());
+   //        echo"<pre>";
+   //        print_r($_product->getfeatured_product_countdown_release_date());die;
+?>
+<?php $buttonTitle = __('Add to Cart'); ?>
+<?php if ($_product->isSaleable()) :?>
+<div class="box-tocart11">
+    <div class="fieldset11">
+        <?php if ($block->shouldRenderQuantity()) :?>
+        <?php if($_product->getfeatured_product_countdown() == 0) :?>
+        
+        <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if($_product->getfeatured_product_countdown())  : ?>
+        <div class="actions">
+            <button type="submit"
+                    title="<?= $block->escapeHtmlAttr($buttonTitle) ?>"
+                    class="action primary tocart"
+                    id="product-addtocart-button"
+                    disabled>
+                <span id="button_label"></span>
+                <p id="pre_order_strat_time<?=$_product->getId()?>" class="pre_order_strat_time" name="pre_order_strat_time<?=$_product->getId()?>"></p>
+            </button>
+            <?php 
+            if($_product->getfeatured_product_countdown_release_date()){
+              $CountDownDate = $_product->getfeatured_product_countdown_release_date();
+            }else{
+              $CountDownDate = "0000-00-00 00:00:00";
+            }
+            ?>
+            <?= $block->getChildHtml('', true) ?>
+             <script>
+                var currentTime = <?= strtotime($objDate->gmtDate()) ?> * 1000;
+                var productReleaseDateCountDown = <?= strtotime($CountDownDate) ?> * 1000;
+                var getNotifyAddToCrat = "<?php echo $getNotifyAddToCrat; ?>";
+                var x = setInterval(function() {
+                    currentTime = currentTime + 1000;
+                    var distance = productReleaseDateCountDown - currentTime;
+                    if(distance > 0){
+                      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                      document.getElementById("pre_order_strat_time<?=$_product->getId()?>").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+                      document.getElementById("product-addtocart-button").disabled = true;
+                      document.getElementById("button_label").innerHTML = getNotifyAddToCrat;
+                    }
+                    else {
+                        document.getElementById("pre_order_strat_time<?=$_product->getId()?>").innerHTML = "";
+                        document.getElementById("button_label").innerHTML = "Add to Cart";
+                        document.getElementById("product-addtocart-button").disabled = false;
+                        document.getElementById("send_email").innerHTML = "";
+                        clearInterval(x);
+                    }
+                }, 1000);
+            </script>
+        </div>
+
+        <?php else :?>
+          <div class="actions">
+            <button type="submit"
+                    title="<?= $block->escapeHtmlAttr($buttonTitle) ?>"
+                    class="action primary tocart"
+                    id="product-addtocart-button">
+                <span><?= $block->escapeHtml($buttonTitle) ?></span>
+            </button>
+            <?= $block->getChildHtml('', true) ?>
+        </div>
+
+      <?php endif;?>
+
+    </div>
+</div>
+<?php endif; ?>

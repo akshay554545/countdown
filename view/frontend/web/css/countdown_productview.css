@@ -1,0 +1,17 @@
+.sale_end_time {
+    display: contents;
+    color: red;
+    font-weight: bolder;
+}.sale_start_time {
+    display: contents;
+    color: red;
+    font-weight: bolder;
+}.sale_start_label {
+    display: inline;
+    font-size-adjust: inherit;
+    font-weight: bolder;
+}.sale_end_label {
+    display: inline;
+    font-size-adjust: inherit;
+    font-weight: bolder;
+}

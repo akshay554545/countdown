@@ -1,0 +1,113 @@
+<?php
+// simple product
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+
+/**
+ * Product view template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View
+ */
+?>
+<?php $_helper = $this->helper(Magento\Catalog\Helper\Output::class); ?>
+<?php 
+  $_product = $block->getProduct();
+  $helper = $this->helper('Magesture\CountDown\Helper\Data');
+  $getNotifyAddToCrat = $helper->getNotifyAddToCrat();
+  $getNotifyButtonLabel = $helper->getNotifyButtonLabel();
+  $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+  $customerSession = $objectManager->get('Magento\Customer\Model\SessionFactory')->create();
+  $customer_email = $customerSession->getCustomer()->getEmail();
+  $customer_id = $customerSession->getCustomer()->getId();
+  $objDate = $objectManager->create('Magento\Framework\Stdlib\DateTime\DateTime');
+  $current_date =new DateTime($objDate->gmtDate());
+  $releaseDateCountDown= new DateTime($_product->getfeatured_product_countdown_release_date());
+ ?>
+
+<div class="product-add-form">
+    <form data-product-sku="<?= $block->escapeHtmlAttr($_product->getSku()) ?>"
+          action="<?= $block->escapeUrl($block->getSubmitUrl($_product)) ?>" method="post"
+          id="product_addtocart_form"<?php if ($_product->getOptions()) :?> enctype="multipart/form-data"<?php endif; ?>>
+        <input type="hidden" name="product" value="<?= (int)$_product->getId() ?>" />
+        <input type="hidden" name="selected_configurable_option" value="" />
+        <input type="hidden" name="related_product" id="related-products-field" value="" />
+        <input type="hidden" name="item"  value="<?= (int)$block->getRequest()->getParam('id') ?>" />
+        <?= $block->getBlockHtml('formkey') ?>
+        <?= $block->getChildHtml('form_top') ?>
+        <?php if (!$block->hasOptions()) :?>
+            <?= $block->getChildHtml('product_info_form_content') ?>
+        <?php else :?>
+            <?php if ($_product->isSaleable() && $block->getOptionsContainer() == 'container1') :?>
+                <?= $block->getChildChildHtml('options_container') ?>
+            <?php endif;?>
+        <?php endif; ?>
+
+        <?php if ($_product->isSaleable() && $block->hasOptions() && $block->getOptionsContainer() == 'container2') :?>
+            <?= $block->getChildChildHtml('options_container') ?>
+        <?php endif;?>
+        <?= $block->getChildHtml('form_bottom') ?>
+    </form>
+    <?php
+    ?>
+    <?php if($_product->getfeatured_product_countdown_release_date() >= $objDate->gmtDate()) :?>
+    <!-- email notifiation buttton -->
+    <div class="email_notify" id="send_email">
+      <?php if($_product->getfeatured_product_countdown())  : ?>
+     <form class="send_email_form" action="<?= $block->getUrl('countdown/countdown/email'); ?>" method="post">
+        <input type="hidden" name="customer_email" class="customer_email" value="<?=$block->escapeHtml($customer_email) ?>">
+        <input type="hidden" name="product_id" class="product_id" value="<?=$block->escapeHtml($_product->getId()) ?>">
+        <button type="submit" title="Submit" class="send_email_button">
+            <span><?= $block->escapeHtml(__($getNotifyButtonLabel)) ?></span>
+        </button>
+      </form>
+       <?php 
+            if($_product->getfeatured_product_countdown_release_date()){
+              $CountDownDate = $_product->getfeatured_product_countdown_release_date();
+            }else{
+              $CountDownDate = "0000-00-00 00:00:00";
+            }
+            ?>
+      <script>
+                var currentTime = <?= strtotime($objDate->gmtDate()) ?> * 1000;
+                var productReleaseDateCountDown = <?= strtotime($CountDownDate) ?> * 1000;
+                var getNotifyAddToCrat = "<?php echo $getNotifyAddToCrat; ?>";
+                var x = setInterval(function() {
+                    currentTime = currentTime + 1000;
+                    var distance = productReleaseDateCountDown - currentTime;
+                    if(!distance > 0){
+                      document.getElementById("send_email").innerHTML = "";
+                      clearInterval(x);            
+                    }
+                }, 1000);
+            </script>
+        <?php endif;?>
+      </div>
+    <?php endif;?>
+</div>
+
+<script type="text/x-magento-init">
+    {
+        "[data-role=priceBox][data-price-box=product-id-<?= $block->escapeHtml($_product->getId()) ?>]": {
+            "priceBox": {
+                "priceConfig":  <?= /* @noEscape */ $block->getJsonConfig() ?>
+            }
+        }
+    }
+</script>
+
+<script type="text/javascript">
+     require(["jquery"],function($){
+        $(".send_email_button").click(function(){
+            var customer_email = $(".customer_email").val();
+            var product_id = $(".product_id").val();
+            if(customer_email == ""){
+            alert("please login first!! after you have add product to notify");
+            return false;
+            }
+        })
+    })
+</script>

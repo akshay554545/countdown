@@ -1,0 +1,210 @@
+<div class="count-down">
+<?php
+    $helper = $this->helper('Magesture\CountDown\Helper\Data');
+    $getProductViewShow = $helper->getProductViewShow();
+    $getProductViewSaleStartLabel = $helper->getProductViewSaleStartLabel();
+    $getProductViewSaleEndLabel = $helper->getProductViewSaleEndLabel();
+    $selectCountDowncustomergroup = strtolower($helper->getCustomerGroup());
+    $selectCountDownStoreGroup = strtolower($helper->getStoreGroup());
+    $product_id = $this->getRequest()->getParam('id');
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $objDate = $objectManager->create('Magento\Framework\Stdlib\DateTime\DateTime');
+    $_product = $objectManager->create('Magento\Catalog\Model\Product')->load($product_id);
+    $customerSession = $objectManager->create('Magento\Customer\Model\Session');
+    $currentCustomergroupId = strtolower((Int)$customerSession->getcustomer_group_id());
+    $storeManager = $objectManager->get(\Magento\Store\Model\StoreManagerInterface::class);
+    $currentStoreId = strtolower($storeManager->getStore()->getId());
+    if($_product->getTypeId() == "configurable" || $_product->getTypeId() == "grouped"){
+        $specialPriceFromDate = $_product->getcount_down_start_from();
+        $specialPriceEndDate = $_product->getcount_down_end_from();
+    }else{
+        $specialPriceFromDate = $_product->getspecial_from_date();
+        $specialPriceEndDate = $_product->getspecial_to_date();
+    }
+    $start_date= new DateTime($specialPriceFromDate);
+    $end_date= new DateTime($specialPriceEndDate);
+    $current_date =new DateTime($objDate->gmtDate());
+    if ( (strpos($selectCountDowncustomergroup, $currentCustomergroupId) !== false) && (strpos($selectCountDownStoreGroup, $currentStoreId) !== false) ) {
+    if($getProductViewShow){
+        if($_product->getspecial_price() || $_product->getTypeId() == "configurable" || $_product->getTypeId() == "grouped"){
+            if(($specialPriceFromDate == "" || $specialPriceFromDate <= $objDate->gmtDate()) && ($specialPriceEndDate == "" || $specialPriceEndDate >= $objDate->gmtDate()))
+            {
+                if($specialPriceEndDate == ""){
+                }
+                elseif($end_date >= $current_date){
+                    if($_product->getfeatured_product_countdown() && $_product->getfeatured_product_countdown_release_date() <= $objDate->gmtDate()){
+                ?>
+                    <div class="count-down-time">
+                        <span class="sale_end_label"><?= $getProductViewSaleEndLabel ?></span>
+                        <br>
+                        <p id="sale_end_time<?=$_product->getId()?>" class="sale_end_time" name="sale_end_time<?=$_product->getId()?>"></p>
+                        <script>
+                            var currentTime = <?= strtotime($objDate->gmtDate()) ?> * 1000;
+                            var countDownEndDate = <?= strtotime($specialPriceEndDate) ?> * 1000;
+                            var x = setInterval(function() {
+                                currentTime = currentTime + 1000;
+                                var distance = countDownEndDate - currentTime;
+                                var days = Math.floor(distance / (1000 * 60 * 60 * 24))+1;
+                                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                document.getElementById("sale_end_time<?=$_product->getId()?>").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+                                if (distance < 0) {
+                                    clearInterval(x);
+                                    document.getElementById("sale_end_time<?=$_product->getId()?>").innerHTML = "EXPIRED";
+                                }
+                            }, 1000);
+                        </script>
+                    </div>
+                <?php
+                }elseif (!$_product->getfeatured_product_countdown()) {
+                    ?>
+                    <div class="count-down-time">
+                        <span class="sale_end_label"><?= $getProductViewSaleEndLabel ?></span>
+                        <br>
+                        <p id="sale_end_time<?=$_product->getId()?>" class="sale_end_time" name="sale_end_time<?=$_product->getId()?>"></p>
+                        <script>
+                            var currentTime = <?= strtotime($objDate->gmtDate()) ?> * 1000;
+                            var countDownEndDate = <?= strtotime($specialPriceEndDate) ?> * 1000;
+                            var x = setInterval(function() {
+                                currentTime = currentTime + 1000;
+                                var distance = countDownEndDate - currentTime;
+                                var days = Math.floor(distance / (1000 * 60 * 60 * 24))+1;
+                                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                document.getElementById("sale_end_time<?=$_product->getId()?>").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+                                if (distance < 0) {
+                                    clearInterval(x);
+                                    document.getElementById("sale_end_time<?=$_product->getId()?>").innerHTML = "EXPIRED";
+                                }
+                            }, 1000);
+                        </script>
+                    </div>
+                    <?php
+                }
+                }
+            } elseif(($specialPriceFromDate == "" || $specialPriceFromDate <= $objDate->gmtDate()) && ($specialPriceEndDate == "" || $specialPriceEndDate <= $objDate->gmtDate()))
+                    {
+                        $currentTime = strtotime($objDate->gmtDate()) * 1000;
+                        $countDownEndDate = strtotime($specialPriceEndDate) * 1000;
+                        $countDownChnageEndDate = date('Y-m-d H:i:s', strtotime($specialPriceEndDate . ' +1 day'));
+                        $countDownChnageEndDate = strtotime($countDownChnageEndDate) * 1000;
+                        $endDate = $end_date->format('d');
+                        $currentDate = $current_date->format('d');
+                        if($endDate == $currentDate)
+                        {
+                            if($_product->getfeatured_product_countdown() && $_product->getfeatured_product_countdown_release_date() <= $objDate->gmtDate()){
+                                ?>
+                                <div class="count-down-time">
+                                <span class="sale_end_time"><?= $getProductViewSaleEndLabel ?></span>
+                                <br>
+                                <p id="sale_end_time<?=$_product->getId()?>" class="sale_end_time" name="sale_end_time<?=$_product->getId()?>"></p>
+                                <script>
+                                    var currentTime = <?= strtotime($objDate->gmtDate()) ?> * 1000;
+                                    var x = setInterval(function() {
+                                        currentTime = currentTime + 1000;
+                                        var distance = <?= $countDownChnageEndDate ?> - currentTime;
+                                        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                        document.getElementById("sale_end_time<?=$_product->getId()?>").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+                                            if (distance < 0) {
+                                                clearInterval(x);
+                                                document.getElementById("sale_end_time<?=$_product->getId()?>").innerHTML = "EXPIRED";
+                                            }
+                                    }, 1000);
+                                    </script>
+                                </div>
+                                <?php
+                            }elseif(!$_product->getfeatured_product_countdown()){
+                                ?>
+                                <div class="count-down-time">
+                                <span class="sale_end_time"><?= $getProductViewSaleEndLabel ?></span>
+                                <br>
+                                <p id="sale_end_time<?=$_product->getId()?>" class="sale_end_time" name="sale_end_time<?=$_product->getId()?>"></p>
+                                <script>
+                                    var currentTime = <?= strtotime($objDate->gmtDate()) ?> * 1000;
+                                    var x = setInterval(function() {
+                                        currentTime = currentTime + 1000;
+                                        var distance = <?= $countDownChnageEndDate ?> - currentTime;
+                                        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                        document.getElementById("sale_end_time<?=$_product->getId()?>").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+                                            if (distance < 0) {
+                                                clearInterval(x);
+                                                document.getElementById("sale_end_time<?=$_product->getId()?>").innerHTML = "EXPIRED";
+                                            }
+                                    }, 1000);
+                                    </script>
+                                </div>
+                                <?php
+                            }
+                        }
+                }
+                else{
+                    if($start_date >= $current_date)
+                    {
+                        if($_product->getfeatured_product_countdown() && $_product->getfeatured_product_countdown_release_date() <= $objDate->gmtDate()){
+                                ?>
+                        <div class="count-down-time">
+                            <span class="sale_start_label"><?= $getProductViewSaleStartLabel ?></span>
+                            <br>
+                            <p id="sale_start_time<?=$_product->getId()?>" class="sale_start_time" name="sale_start_time<?=$_product->getId()?>"></p>
+                            <script>
+                                var currentTime = <?= strtotime($objDate->gmtDate()) ?> * 1000;
+                                var countDownStartDate = <?= strtotime($specialPriceFromDate) ?> * 1000;
+                                var x = setInterval(function() {
+                                currentTime = currentTime + 1000;
+                                var distance = countDownStartDate - currentTime;
+                                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                document.getElementById("sale_start_time<?=$_product->getId()?>").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+                                    if (distance < 0) {
+                                        clearInterval(x);
+                                        document.getElementById("sale_start_time<?=$_product->getId()?>").innerHTML = "EXPIRED";
+                                    }
+                            }, 1000);
+                            </script>
+                        </div>
+                    <?php
+                }
+                elseif (!$_product->getfeatured_product_countdown()) {
+                    ?>
+                    <div class="count-down-time">
+                            <span class="sale_start_label"><?= $getProductViewSaleStartLabel ?></span>
+                            <br>
+                            <p id="sale_start_time<?=$_product->getId()?>" class="sale_start_time" name="sale_start_time<?=$_product->getId()?>"></p>
+                            <script>
+                                var currentTime = <?= strtotime($objDate->gmtDate()) ?> * 1000;
+                                var countDownStartDate = <?= strtotime($specialPriceFromDate) ?> * 1000;
+                                var x = setInterval(function() {
+                                currentTime = currentTime + 1000;
+                                var distance = countDownStartDate - currentTime;
+                                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                document.getElementById("sale_start_time<?=$_product->getId()?>").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+                                    if (distance < 0) {
+                                        clearInterval(x);
+                                        document.getElementById("sale_start_time<?=$_product->getId()?>").innerHTML = "EXPIRED";
+                                    }
+                            }, 1000);
+                            </script>
+                        </div>
+                    <?php
+                }
+                    }
+                }
+            }
+        }
+    }
+    ?>
+
+    </div>

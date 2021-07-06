@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Magesture_CountDown::countdown" title="Magesture CountDown" module="Magesture_CountDown" sortOrder="51" resource="Magesture_CountDown::countdown"/>
+        <add id="Magesture_CountDown::customer" title="Customer" module="Magesture_CountDown" sortOrder="100" action="countdown/customer/email" resource="Magesture_CountDown::customer" parent="Magesture_CountDown::countdown"/>
+        
+        <add id="Magesture_CountDown::countdown_configuration" title="Configuration" module="Magesture_CountDown" sortOrder="99" parent="Magesture_CountDown::countdown" action="adminhtml/system_config/edit/section/countdown" resource="Magesture_CountDown::countdown_configuration"/>
+
+    </menu>
+</config>

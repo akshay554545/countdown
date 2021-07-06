@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	 <head>
+		<css src="Magesture_CountDown::css/countdown_productview.css"/>
+	</head>
+    <body>
+    	<referenceBlock name="product.info.main">
+    		 <block class="Magento\Catalog\Block\Product\View" name="customize.button" as="customize_button" template="Magesture_CountDown::product/view/customize.phtml" after="product.info.price" />
+            <block class="Magento\Catalog\Block\Product\View" name="product.custom.bundle.additional" before="customize_button" template="Magesture_CountDown::product/view.phtml"/>
+        </referenceBlock>
+     </body>
+</page>
